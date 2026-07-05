@@ -1,6 +1,6 @@
 #
 from typing import Annotated
-from pydantic import BaseModel, AfterValidator
+from pydantic import BaseModel, AfterValidator, BeforeValidator
 
 def check_name(name: str) -> str:
     if len(name) < 1 or len(name) > 10:

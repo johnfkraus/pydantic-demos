@@ -4,21 +4,32 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from typing import Optional
+
+from pydantic import BaseModel, field_validator, Field, ValidationError
 import json
+
+VERBOSE = 0
+
+class Selector(BaseModel):
+    name: str
+    email_address: list[dict]
+    phone_number: list[dict]
+
 
 class Address(BaseModel):
     street: str
     city: str
     state: str
+    zipcode: str = Field(..., pattern=r'^\d{5}$')
 
 
 # class AssociatedPerson(BaseModel):
 class PersonBio(BaseModel):
     name: str
+    alias: Optional[list[str]] = None
     address: Address
-
-
+    selector: Optional[Selector] = None
 # class FamilyMember(BaseModel):
 #     name: str
 #     address: Address
@@ -30,6 +41,7 @@ class Cruise(BaseModel):
     paid: str
     ship_name: str
     associated_person: PersonBio
+
     family_members: list[PersonBio]
 
     @classmethod
@@ -38,9 +50,36 @@ class Cruise(BaseModel):
         with open(file_path) as file:
             return cls(**json.loads(file.read()))
 
+    @field_validator('associated_person')
+    @classmethod  # this is a class method because it is called before we create the object.
+    def associated_person_must_be_dictionary(cls, v: dict) -> dict:
+        if not isinstance(v, (PersonBio | dict)):
+            # if ' ' not in v:
+            raise ValueError(f'associated_person must be a dictionary; provided: {type(v)=}')
+        # we can do some data manipulation now:
+        return v
 
-cruise = Cruise.make_cruise_from_json("cruise_dict.json")
-print(cruise)
-print(f"{cruise.model_dump()=}")
-print(f"{cruise.model_dump_json()=}")
-print(f"{cruise.model_json_schema()=}")
+    @field_validator('family_members')
+    @classmethod  # this is a class method because it is called before we create the object.
+    def family_members_must_be_list(cls, v: list) -> list:
+        if not isinstance(v, (list[PersonBio] | list[dict])):
+            raise ValueError(f'family members must be a list; type provided: {type(v)=}')
+
+
+        # we can do some data manipulation now:
+        return v
+
+# FirstName = Annotated[str, AfterValidator(check_name)]
+files = ["cruise_dict.json", "cruise_dict_fam_is_dict.json"]
+
+try:
+    cruise = Cruise.make_cruise_from_json(files[1])
+except ValidationError as e:
+    print(f"{e=}")
+    
+
+print(f"{type(cruise)=}, {cruise=}")
+if VERBOSE > 0:
+    print(f"{cruise.model_dump()=}")
+    print(f"{cruise.model_dump_json()=}")
+    print(f"{cruise.model_json_schema()=}")
