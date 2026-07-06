@@ -77,8 +77,8 @@ def load_to_postgres(valid_rows: list[dict[str, Any]]):
 
 
 if __name__ == "__main__":
-    # valid_rows, error_rows = load_cruises_from_json("cruise_dict.json")
-    valid_rows, error_rows = load_cruises_from_json("cruise_dict_fam_is_dict.json")
+    # valid_rows, error_rows = load_cruises_from_json("data/cruise_dict.json")
+    valid_rows, error_rows = load_cruises_from_json("data/cruise_dict_fam_is_dict.json")
 
     with open("cruise_errors.json", "w") as f:
         json.dump(error_rows, f, indent=2, default=str)

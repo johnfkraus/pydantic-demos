@@ -1,0 +1,24 @@
+{
+  "cruise_id": "abc223",
+  "dob": "2011-11-11",
+  "paid": "2222.24",
+  "ship_name": "The Abomination of the Seas",
+  "associated_person": {
+    "name": "Joe Smith",
+    "address": {
+      "street": "123 Maple Street",
+      "city": "Newark",
+      "state": "NJ",
+      "zipcode": "03112"
+    }
+  },
+  "family_members": {
+    "name": "Susie Mason",
+    "address": {
+      "street": "399 West Mifflin Street",
+      "city": "Madison",
+      "state": "WI",
+      "zipcode": "72113"
+    }
+  }
+}
